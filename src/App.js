@@ -1,42 +1,42 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import './App.css';
-
+import { connect } from 'react-redux';
+import { addItem } from  './actions/items';
 
 class App extends Component {
 
-  handleOnClickItems() {
-    this.props.store.dispatch({
-      type: 'GET_COUNT_OF_ITEMS',
-    });
-  }
-
-  handleOnClickUsers() {
-    this.props.store.dispatch({
-      type: 'GET_COUNT_OF_USERS',
-    })
+  handleOnClick = event => {
+    this.props.addItem() // Code change: this.props.store.dispatch is no longer being called
   }
 
   render() {
-    debugger;
     return (
       <div className="App">
-          <button onClick={() => this.handleOnClickItems()}>
-            Click to change items count
-            </button>
-          <button onClick={() => this.handleOnClickUsers()}>
-            Click to change user count
+        <button onClick={this.handleOnClick}>
+          Click
           </button>
-          <p> {this.props.items.length}</p>
+        <p>{this.props.items.length}</p>
       </div>
     );
   }
-}
+};
 
 const mapStateToProps = (state) => {
-  // debugger;
-  return { items: state.items }
-}
+  return {
+    items: state.items
+  };
+};
 
-export default connect(mapStateToProps)(App);
- 
+// Code change: this new function takes in dispatch as an argument
+// It then returns an object that contains a function as a value!
+// Notice above in handleOnClick() that this function, addItem(),
+// is what is called, NOT the addItem action creator itself.
+const mapDispatchToProps = dispatch => {
+  return {
+    addItem: () => {
+      dispatch(addItem())
+    }
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App); 
